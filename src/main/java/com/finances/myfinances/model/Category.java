@@ -3,30 +3,23 @@ package com.finances.myfinances.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import jakarta.persistence.*;
 import lombok.NonNull;
 
 @Entity
-@Table(name = "users")
+@Table(name = "categories")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
+public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @NonNull
-    private String username;
-    @NonNull
-    private String password;
-    @NonNull
-    private String email;
-    @NonNull
-    private String grants;
-    @NonNull
-    @Enumerated(EnumType.STRING)
-    private UserType userType;
+    private String name;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 }
-
-

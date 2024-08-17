@@ -14,6 +14,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import com.finances.myfinances.model.UserType;
+
 
 @RestController
 @RequestMapping("/finances/users")
@@ -49,6 +51,7 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody User user) {
+        user.setUserType(UserType.FREE);
         return ResponseEntity.ok(userService.saveUser(user));
     }
 
