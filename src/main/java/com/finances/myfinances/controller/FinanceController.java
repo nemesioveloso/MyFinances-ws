@@ -46,7 +46,7 @@ public class FinanceController {
 
             // Cria a nova finança
             Finance createdFinance = financeService.createFinance(finance);
-            return ResponseEntity.ok(createdFinance);
+            return ResponseEntity.ok("Finança adicionada com sucesso");
         } catch (Exception e) {
             e.printStackTrace();
             // Aqui retornamos a mensagem de erro específica que foi lançada

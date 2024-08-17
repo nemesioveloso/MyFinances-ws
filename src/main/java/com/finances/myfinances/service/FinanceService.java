@@ -27,13 +27,18 @@ public class FinanceService {
     public Finance createFinance(Finance finance) throws Exception {
         User user = finance.getUser();
 
-        // Obtém todas as categorias distintas do usuário
+        // Verifica se a categoria já existe para o usuário
         List<String> distinctCategories = financeRepository.findDistinctCategoriaByUser(user);
+        boolean categoriaExiste = distinctCategories.contains(finance.getCategoria());
 
-        // Verifica se o usuário é FREE e se já possui 4 categorias diferentes
-        if (user.getUserType() == UserType.FREE && distinctCategories.size() >= 5) {
-            throw new Exception("Usuário FREE não pode ter mais de 5 categorias diferentes.");
+        if (!categoriaExiste) {
+            // Se a categoria não existe e o usuário é FREE com 5 categorias distintas, não permite criar nova categoria
+            if (user.getUserType() == UserType.FREE && distinctCategories.size() >= 5) {
+                throw new Exception("Usuário FREE não pode ter mais de 5 categorias diferentes.");
+            }
         }
+
+        // Caso a categoria já exista ou o limite não tenha sido atingido, permite a criação da finança
         return financeRepository.save(finance);
     }
 
