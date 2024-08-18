@@ -5,12 +5,17 @@ import com.finances.myfinances.model.User;
 import com.finances.myfinances.service.FinanceService;
 import com.finances.myfinances.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/finances")
@@ -55,15 +60,28 @@ public class FinanceController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Finance>> getAllFinances() {
+    public ResponseEntity<Map<String, Object>> getAllFinances(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
         // Recupera o usuário autenticado
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userService.getUserByUsername(userDetails.getUsername());
 
-        // Obtém todas as finanças associadas ao usuário
-        List<Finance> finances = financeService.getAllFinancesByUser(user);
+        // Define a paginação e ordenação padrão
+        Pageable pageable = PageRequest.of(page, size);
 
-        return ResponseEntity.ok(finances);
+        // Obtém as finanças associadas ao usuário com paginação
+        Page<Finance> financePage = financeService.getAllFinancesByUser(user, pageable);
+
+        // Prepara a resposta
+        Map<String, Object> response = new HashMap<>();
+        response.put("totalElements", financePage.getTotalElements());
+        response.put("totalPages", financePage.getTotalPages());
+        response.put("page", financePage.getNumber());
+        response.put("size", financePage.getSize());
+        response.put("list", financePage.getContent());
+
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping("/{id}")

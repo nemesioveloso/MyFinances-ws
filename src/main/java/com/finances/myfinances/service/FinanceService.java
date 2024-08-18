@@ -5,6 +5,8 @@ import com.finances.myfinances.model.User;
 import com.finances.myfinances.model.UserType;
 import com.finances.myfinances.repository.FinanceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -42,8 +44,8 @@ public class FinanceService {
         return financeRepository.save(finance);
     }
 
-    public List<Finance> getAllFinancesByUser(User user) {
-        return financeRepository.findAllByUser(user);
+    public Page<Finance> getAllFinancesByUser(User user, Pageable pageable) {
+        return financeRepository.findAllByUserOrderByDataDesc(user, pageable);
     }
 
     public Finance getFinanceByIdAndUser(Long id, User user) {
